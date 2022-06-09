@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title></title>
+  <style>
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js" type="text/javascript" charset="utf-8"></script>
+</head>
+
+<body>
+  <div id="app">
+    <p>{{ foo }}</p>
+    <p>{{ now() }}</p>
+    <p>{{ fullName }}</p>
+    <!-- 这里的 `foo` 不会更新！ -->
+    <p v-if="seen">现在你看到我了</p>
+    <button v-on:click="foo = 'baz'">Change it</button>
+    <button v-bind:disabled="isButtonDisabled">Button</button>
+    <div v-bind:class="[{ active: isActive }, errorClass]"></div>
+    <div v-bind:style="{ color: activeColor, 'font-size': fontSize + 'px', backgroundColor: bgc, }">我是谁</div>
+    <div v-if="Math.random() > 0.5">
+      Now you see me
+    </div>
+    <div v-else>
+      Now you don't
+    </div>
+    <template v-if="Math.random() > 0.5">
+      <label>Username</label>
+      <input placeholder="Enter your username">
+    </template>
+    <template v-else>
+      <label>Email</label>
+      <input placeholder="Enter your email address">
+    </template>
+    <ul>
+      <li v-for="(item, a) in items">
+        {{ parentMessage }} - {{ a }} - {{ item.message }}
+      </li>
+    </ul>
+    <div v-on:click.self.prevent="warn('Form cannot be submitted yet.', $event)">
+      Submit
+    </div>
+    <div v-on:click="doThis">
+      <button v-on:click.once="warn('Form cannot be submitted yet.', $event)">
+        Submit
+      </button>
+    </div>
+    <input v-on:keyup.1="doThis">
+    <input v-model="message" placeholder="edit me" value="a">
+    <p>Message is: {{ message }}</p>
+    <input type="checkbox" id="checkbox" true-value="yes" false-value="no" v-model="checked">
+    <label for="checkbox">{{ checked }}</label>
+    <div id="example-4">
+      <input type="radio" id="one" value="One" v-model="picked">
+      <label for="one">One</label>
+      <br>
+      <input type="radio" id="two" value="Two" v-model="picked">
+      <label for="two">Two</label>
+      <br>
+      <span>Picked: {{ picked }}</span>
+    </div>
+    <div id="example-5">
+      <select v-model="selected">
+        <option disabled value="5">请选择</option>
+        <option value="2">A</option>
+        <option>B</option>
+        <option>C</option>
+      </select>
+      <span>Selected: {{ selected }}</span>
+    </div>
+    <select v-model="selected">
+      <!-- 内联对象字面量 -->
+      <option v-bind:value="{ number: 123 }">123</option>
+    </select>
+    <input v-model.lazy="msg">
+    <p>Msg is: {{ msg }}</p>
+    <button-counter></button-counter>
+    <input v-bind:value="searchText" v-on:input="search">
+    <custom-input v-model="Text" sksksk="a"></custom-input>
+    <base-input label="Username:" v-model="username" required placeholder="Enter your username"></base-input>
+    <base-layout>
+      <template v-slot:header>
+        <h1>Here might be a page title</h1>
+      </template>
+      <template v-slot:footer>
+        <p>Here's some contact info</p>
+      </template>
+
+      <p>A paragraph for the main content.</p>
+      <p>And another one.</p>
+
+
+    </base-layout>
+  </div>
+
+  <script type="text/javascript">
+    Vue.component('base-input', {
+      inheritAttrs: false,
+      props: ['label', 'value'],
+      template: `
+    <label>
+      {{ label }}
+      <input
+        v-bind="$attrs"
+        v-bind:value="value"
+        v-on:input="$emit('input', $event.target.value)"
+      >
+    </label>
+  `
+    })
+    // 定义一个名为 button-counter 的新组件
+    Vue.component('button-counter', {
+      data: function () {
+        return {
+          count: 0
+        }
+      },
+      template: '<button v-on:click="count++">You clicked me {{ count }} times.</button>'
+    })
+    Vue.component('customInput', {
+      props: ['value'],
+      template: `
+    <input
+      v-bind:value="value"
+      v-on:input="$emit('input', $event.target.value)"
+    >
+  `
+    })
+    Vue.component('base-layout', {
+      template: `
+      <div class="container">
+        <header>
+          <slot name="header"></slot>
+        </header>
+        <main>
+          <slot></slot>
+          </main>
+        <footer>
+          <slot name="footer"></slot>
+        </footer>
+      </div>
+    `
+    })
+    var obj = {
+      foo: 'bar',
+      isButtonDisabled: null,
+      seen: true,
+      firstName: 'Fak',
+      lastName: 'Bar',
+      isActive: true,
+      errorClass: 'eeee',
+      activeColor: 'red',
+      fontSize: 15,
+      bgc: 'blue',
+      parentMessage: 'Parent',
+      items: [
+        { message: 'Foo' },
+        { message: 'Bar' }
+      ],
+      message: '',
+      checked: '',
+      picked: '',
+      selected: '2',
+      msg: '',
+      searchText: '',
+      Text: '',
+      username: ''
+    }
+
+
+    var vm = new Vue({
+      el: '#app',
+      data: obj,
+      methods: {
+        a: function () {
+          console.log(this);
+        },
+        now: function () {
+          return new Date().toLocaleString()
+        },
+        warn: function (message, event) {
+          // 现在我们可以访问原生事件对象
+          if (event) {
+            event.preventDefault()
+          }
+          alert(message)
+        },
+        doThis: function () {
+          alert('doThis')
+        },
+        search: function (event) {
+          this.searchText = event.target.value
+          console.log(event.target);
+        }
+      },
+      computed: {
+        fullName: {
+          // getter
+          get: function () {
+            return this.firstName + ' ' + this.lastName
+          },
+          // setter
+          set: function (newValue) {
+            var names = newValue.split(' ')
+            this.firstName = names[0]
+            this.lastName = names[names.length - 1]
+          }
+        }
+      }
+    })
+    vm.fullName = 'John Doe'
+    console.log(vm.firstName);
+    vm.items.push({ messae: 'Baz' })
+    vm.items.messae = 'baaaaa'
+
+
+  </script>
+</body>
+
+</html>
